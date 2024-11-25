@@ -1,0 +1,53 @@
+<% layout("/layouts/boilerplate") %>
+<body>
+    
+
+    <div class="row">
+        <div class="col-8 offset-2">
+        <!-- <br><br> -->
+        <h3>Create a New Listing</h3>
+    <form action="/listings" method="post" novalidate class="needs-validation">
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input name="listing[title]" placeholder="Add a Title" type="text" class="form-control" required>
+        <div class="valid-feedback">Title Look Good</div>
+      </div>
+      
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea name="listing[description]" class="form-control" required></textarea>
+        <div class="invalid-feedback">Please enter some description</div>
+      </div>
+      
+      <div class="mb-3">
+        <label for="image" class="form-label">Image</label>
+        <input name="listing[image]" placeholder="enter imageURL/Link" type="text" class="form-control">
+      </div>
+
+      <div class="row">
+        <div class="mb-3 col-md-4">
+            <label for="price" class="form-label">Price</label>
+            <input name="listing[price]" placeholder="1234"  class="form-control" required>
+            <div class="invalid-feedback">Please enter a vaild price</div>
+          </div>
+          <div class="mb-3 col-md-8">
+            <label for="country" class="form-label">Country</label>
+            <input name="listing[country]" placeholder="enter country" type="text"  class="form-control" required>
+            <div class="invalid-feedback">Please enter a country name</div>
+          </div>
+      </div>
+     
+
+      <div class="mb-3">
+        <label for="location" class="form-label">Location</label>
+        <input name="listing[location]" placeholder="enter location" type="text"  class="form-control" required>
+        <div class="invalid-feedback">Please enter a vaild location</div>
+      </div>
+      
+       
+        <button class="btn btn-dark mb-3 Add-btn">Add</button>
+    </form>
+    </div>
+</div>
+</body>
