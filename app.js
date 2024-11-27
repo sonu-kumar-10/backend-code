@@ -6,6 +6,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const review = require("./models/review.js");
+const listing = require("./routes/listings.js");
 
 // Use method-override for handling PUT and DELETE methods in forms
 app.use(methodOverride("_method"));
@@ -40,8 +41,9 @@ app.get("/", (req, res) => {
 
 
 // Routes for Listing and Review
-app.use("/listings", require("./routes/listings.js"));  // Ensure the listings routes are in a separate file (listings.js)
+app.use("/listings", listing);
 app.use("/listings/:id/reviews",review)
+
 
 
 // 404 Error Handling

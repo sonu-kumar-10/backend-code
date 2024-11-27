@@ -34,9 +34,10 @@ router.get("/new",(req,res) =>{
 
 //show route
 router.get("/:id", warpAsync(async (req,res)=>{
-    let {id} = req.params;
-    const listing = await Listing.findById(id).populate("review");
-    res.render("listing/show.ejs",{listing})
+  let {id} = req.params;
+  const listing = await Listing.findById(id).populate("review");
+  console.log(listing);
+  res.render("listing/show.ejs",{listing})
 }));
 
 //create route
