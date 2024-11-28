@@ -16,14 +16,18 @@ const listingSchema = new Schema({
     type: Number,  // If you're storing a price as a number
     required: true,
   },
-  location: String,
-  country: String,
-  review: [
+  location: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  reviews: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "Review"
-    }
-  ]
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review"
+    },
+]
 });
 
 listingSchema.post("findOneAndDelete" ,async(listing) =>{

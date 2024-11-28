@@ -35,8 +35,7 @@ router.get("/new",(req,res) =>{
 //show route
 router.get("/:id", warpAsync(async (req,res)=>{
   let {id} = req.params;
-  const listing = await Listing.findById(id).populate("review");
-  console.log(listing);
+  let listing = await Listing.findById(req.params.id).populate("reviews"); // Populate reviews
   res.render("listing/show.ejs",{listing})
 }));
 
@@ -65,7 +64,6 @@ router.get("/:id/edit",warpAsync(async (req,res)=>{
 router.delete("/:id", warpAsync(async (req,res) =>{
   let {id} = req.params;
   let deletedListing = await Listing.findByIdAndDelete(id);
-  console.log(deletedListing);
   res.redirect("/listings")
 }))
 

@@ -8,6 +8,8 @@ const ExpressError = require("./utils/ExpressError.js");
 const review = require("./models/review.js");
 const listing = require("./routes/listings.js");
 
+const reviewsRoute = require("./routes/review.js");
+
 // Use method-override for handling PUT and DELETE methods in forms
 app.use(methodOverride("_method"));
 
@@ -21,17 +23,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "/public")));
 
 // MongoDB connection URL
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust"; 
 
-// Establish MongoDB connection
-mongoose.connect(MONGO_URL)
-  .then(() => {
-    console.log("Connected to DB");
-  })
-  .catch((err) => {
-    console.log("Failed to connect to DB:", err);
-    process.exit(1);  // Exit if DB connection fails
-  });
+
+main()
+    .then((res) => {
+        console.log("Connected to DB");
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+
+
+//connect mongoose
+async function main() {
+    await mongoose.connect(MONGO_URL);
+}
+
 
 // Home route
 app.get("/", (req, res) => {
@@ -42,8 +50,8 @@ app.get("/", (req, res) => {
 
 // Routes for Listing and Review
 app.use("/listings", listing);
-app.use("/listings/:id/reviews",review)
-
+// app.use("/listings/:id/reviews",review)
+app.use("/listings/:id/reviews", reviewsRoute);
 
 
 // 404 Error Handling

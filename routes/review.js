@@ -44,15 +44,11 @@ router.post(
   validateReview,
   wrapAsync(async (req,res)=>{
       let {id}=req.params;
-      console.log(id);
-      let listing=await Listing.findById(id);
-      console.log(listing);
-      let newReview=new Review(req.body.review);
+      let listing = await Listing.findById(id);
+      let newReview = new Review(req.body.review);
       listing.reviews.push(newReview);
       await listing.save();
       await newReview.save();
-      console.log(newReview);
-      console.log("new Review saved");
       res.redirect(`/listings/${id}`);
 })
 )
