@@ -2,60 +2,31 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { reviewSchema } = require("../schema.js");
 const Review = require("../models/review.js");
 const Listing = require("../models/listing.js"); 
+const { validateReview, isLoggedIn, isReviewAuthor } = require("../middlewere.js")
 
-// Validation middleware for reviews
-const validateReview = (req, res, next) => {
-  let { error } = reviewSchema.validate(req.body);
-  if (error) {
-    let errMsg = error.details.map((el) => el.message).join(", ");
-    throw new ExpressError(400, errMsg);
-  } else {
-    next();
-  }
-};
-
-// // Review Post route
-// router.post(
-//   "/",
-//   validateReview,
-//   wrapAsync(async (req, res) => {
-//     let listing = await Listing.findById(req.params.id);
-//     if (!listing) {
-//       throw new ExpressError(404, "Listing not found");
-//     }
-
-//     let newReview = new Review(req.body.review);
-//     listing.review.push(newReview);
-
-//     await newReview.save();
-//     await listing.save();
-
-//     console.log("Review saved successfully");
-//     res.redirect(`/listings/${listing._id}`); 
-//   })
-// );
 
 // Review Post route
 router.post(
-  "/",
+  "/",isLoggedIn,
   validateReview,
   wrapAsync(async (req,res)=>{
-      let {id}=req.params;
+      let {id} = req.params;
       let listing = await Listing.findById(id);
       let newReview = new Review(req.body.review);
+      newReview.author = req.user._id;
       listing.reviews.push(newReview);
       await listing.save();
       await newReview.save();
+      req.flash("success", "Review Created");
       res.redirect(`/listings/${id}`);
 })
 )
 
 // Delete Review route
 router.delete(
-  "/:reviewId",
+  "/:reviewId", isLoggedIn, isReviewAuthor,
   wrapAsync(async (req, res) => {
     let { id, reviewId } = req.params;
 
@@ -64,11 +35,14 @@ router.delete(
       throw new ExpressError(404, "Listing not found");
     }
 
-    await Listing.findByIdAndUpdate(id, { $pull: { review: reviewId } });
+    // Remove the review from the listing
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
+
+    // Delete the review
     await Review.findByIdAndDelete(reviewId);
 
-    console.log("Review deleted successfully");
-    res.redirect(`/listings/${id}`); 
+    req.flash("danger", "Review Deleted");
+    res.redirect(`/listings/${id}`);  // Corrected URL format
   })
 );
 

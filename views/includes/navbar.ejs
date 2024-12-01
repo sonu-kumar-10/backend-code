@@ -3,17 +3,20 @@
       <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"></button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
+        <div class="navbar-nav">
             <a class="nav-link"  href="/">Home</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/listings">Listing</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/listings/new">Add New Listing</a>
-          </li>
-        </ul>
+        </div>
+        <div class="navbar-nav ms-auto">
+          <% if(!currUser) { %>
+            <a class="nav-link Acc"  href="/signup">Sign in</a>
+            <a class="nav-link Acc1" href="/login">Login</a>
+            <% } %>
+            <% if(currUser) { %>
+            <a class="nav-link Acc2" href="/logout">Logout</a>
+            <% } %>
+        </div>
       </div>
     </div>
   </nav>
