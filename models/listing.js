@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Review = require("./review");
 const Schema = mongoose.Schema;
 
 const listingSchema = new Schema({
@@ -9,8 +8,8 @@ const listingSchema = new Schema({
   },
   description: String,
   image: {
-    type: String,
-    default: "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTE0ODQ2MDI1NTE4MDMzOTQ4MQ%3D%3D/original/c92634d0-4964-439a-905d-b9129af14d34.jpeg?im_w=1200",
+    url: String,
+    filename: String,
   },
   price: {
     type: Number,
@@ -22,16 +21,27 @@ const listingSchema = new Schema({
   country: {
     type: String,
   },
+  geometry: {
+    type: {
+      type: String,  // This must be 'Point'
+      enum: ["Point"],  // Only "Point" type is allowed
+      required: true,  // This field is required
+    },
+    coordinates: {
+      type: [Number],  // Array of numbers (longitude, latitude)
+      required: true,  // Coordinates are required
+    },
+  },
   reviews: [
     {
-      type:Schema.Types.ObjectId,
-      ref: "Review"
+      type: Schema.Types.ObjectId,
+      ref: "Review",
     },
   ],
   owner: {
     type: Schema.Types.ObjectId,
-    ref: "User"
-  }
+    ref: "User",
+  },
 });
 
 listingSchema.post("findOneAndDelete", async (listing) => {

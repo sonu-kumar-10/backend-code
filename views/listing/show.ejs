@@ -1,102 +1,80 @@
 <% layout("/layouts/boilerplate") %>
+
 <body>
-  <div class="row mt-3">
-    <div class="col-8 offset-3">
-      <h3><%= listing.title %></h3>
-    </div>
-    <div class="card col-6 offset-3 listing-card">
-      <img
-        src="<%= listing.image %>"
-        class="card-img-top show-img"
-        alt="listing-image"
-      />
-      <div class="card-body">
-        <p class="card-text">Owned By: 
-          <i><%= listing.owner.username %></i> </p>
-          <p><%= listing.description %> </p>
-          <p>&#8377; <%= Number(listing.price).toLocaleString('en-IN') %> </p>
-          <p><%= listing.location %> </p>
-          <p><%= listing.country %></p>
-      </div>
-    </div>
-    <br />
-
-    <!-- Owner Deleting Method -->
-    <% if (currUser && listing.owner._id.equals(currUser._id)) { %>
-      <div class="btns mb-3">
-        <a
-          href="/listings/<%= listing._id %>/edit"
-          class="btn btn-dark col-1 offset-3"
-        >Edit</a>
-        <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
-          <button class="btn btn-dark offset-5 edit-btn">Delete</button>
-        </form>
-      </div>
-    <% } %>
-
-    <!-- Review Method  -->
-    <div class="col-8 offset-3 mb-3">
-      <h4>Leave a Review</h4>
-      <hr />
-      <% if (currUser) { %>
-      <form
-        action="/listings/<%= listing._id %>/reviews"
-        method="post"
-        novalidate
-        class="needs-validation"
-      >
-        <div>
-          <label for="rating">Rating</label>
-          <input
-            type="range"
-            min="1"
-            max="5"
-            id="rating"
-            name="review[rating]"
-            class="form-range"
-            required
-          />
+  <div class="row">
+    <div class="col-8 offset-2">
+      <h3>Create a New Listing</h3>
+      <form action="/listings" method="post" novalidate class="needs-validation" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input name="listing[title]" placeholder="Add a Title" type="text" class="form-control" required>
+          <div class="valid-feedback">Title Looks Good</div>
         </div>
-        <div>
-          <br />
-          <label for="comment">Comment</label><br /><br />
-          <textarea
-            name="review[comment]"
-            id="comment"
-            cols="30"
-            rows="5"
-            class="form-control shadow-lg p-3 mb-5 bg-body-tertiary rounded"
-            aria-label="With textarea"
-            required
-          ></textarea>
-          <div class="invalid-feedback">Please enter a comment.</div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea name="listing[description]" class="form-control" required></textarea>
+          <div class="invalid-feedback">Please enter some description</div>
         </div>
-        <button class="btn btn-outline-success mb-3" type="submit">
-          Submit
-        </button>
+
+        <div class="mb-3">
+          <label for="image" class="form-label">Upload Listing Image</label>
+          <input name="listing[image]" type="file" class="form-control">
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-md-4">
+            <label for="price" class="form-label">Price</label>
+            <input name="listing[price]" placeholder="1234" class="form-control" required>
+            <div class="invalid-feedback">Please enter a valid price</div>
+          </div>
+          <div class="mb-3 col-md-8">
+            <label for="country" class="form-label">Country</label>
+            <input name="listing[country]" placeholder="Enter country" type="text" class="form-control" required>
+            <div class="invalid-feedback">Please enter a country name</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="location" class="form-label">Location</label>
+          <input name="listing[location]" placeholder="Enter location" type="text" class="form-control" required>
+          <div class="invalid-feedback">Please enter a valid location</div>
+        </div>
+
+        <!-- Latitude and Longitude Fields -->
+        <div class="mb-3">
+          <label for="latitude" class="form-label">Latitude</label>
+          <input name="listing[geometry][coordinates][1]" type="number" step="any" class="form-control" required placeholder="Enter latitude">
+        </div>
+
+        <div class="mb-3">
+          <label for="longitude" class="form-label">Longitude</label>
+          <input name="listing[geometry][coordinates][0]" type="number" step="any" class="form-control" required placeholder="Enter longitude">
+        </div>
+
+        <button class="btn btn-dark mb-3 Add-btn">Add</button>
       </form>
-      <hr />
-      <% } %>
-      
-      <p><b>All Reviews</b></p>
-<div class="row">
-  <% for (let review of listing.reviews) { %>  <!-- Change listing.review to listing.reviews -->
-    <div class="card col-5 ms-3 mb-3">
-      <div class="card-body">
-        <h5 class="card-title mt-3">@<%= review.author.username %></h5>
-        <p class="card-text"><%= review.comment %></p>
-        <p class="card-text"><%= review.rating %>⭐</p>
-        <form
-          class="mb-3"
-          method="post"
-          action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
-        >
-          <button class="btn btn-danger">Delete</button>
-        </form>
-      </div>
-    </div>
-  <% } %>
-</div>
     </div>
   </div>
+
+  <!-- Map Container -->
+  <div id="Map" style="height: 400px; width: 100%; margin-top: 20px;"></div>
+
+  <!-- Include Maptiler Script -->
+  <script src="https://unpkg.com/maptiler-map@2.0.0/dist/maptiler-map.js"></script>
+
+  <script>
+    // Initialize the map
+    const map = new maptiler.Map({
+      container: 'Map', // Map container ID
+      style: "https://api.maptiler.com/maps/basic/style.json?key=UrG0IEiux6iyw6fu649Z", // Style URL with your API key
+      center: [85.27, 25.96], // Longitude, Latitude
+      zoom: 2,
+    });
+
+    // Add a marker at the default center
+    const marker = new maptiler.Marker()
+      .setLngLat([85.27, 25.96]) // Longitude, Latitude
+      .addTo(map);
+  </script>
 </body>

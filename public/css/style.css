@@ -148,3 +148,32 @@ body{
     font-size: 20px !important;
     
 }
+
+.Home{
+    font-weight: 400 !important;
+    transition: all 0.9s ease ;
+}
+.Home:hover{
+    background-color: #68686817 !important;
+    border-radius: 22px !important;
+}
+
+
+#del{
+    color: #0f0e0e !important;
+    font-size: 15px !important;
+    padding: 5px !important;
+    background-color: #37dbcd !important;
+    border: none !important;
+}
+
+/* Map */
+
+#Map {
+    width: 80vh;
+    height: 400px;
+    /* position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0; */
+}

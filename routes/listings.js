@@ -2,30 +2,47 @@ const express = require("express");
 const router = express.Router();
 const Listing = require("../models/listing.js");
 const warpAsync = require("../utils/wrapAsync.js");
-const { isLoggedIn,isOwner,validateListing } = require("../middlewere.js");
+const { isLoggedIn, isOwner, validateListing } = require("../middlewere.js");
 const listingControlers = require("../controllers/listing.js");
+const multer = require("multer");
+const { storage } = require("../cloudConfig.js");
+// const storage = new CloudinaryStorage({  });
 
+const upload = multer({ storage });
 
-
-// index route
-router.get("/", warpAsync(listingControlers.Index));
+// Index Route And Create Route
+router
+  .route("/")
+  .get(warpAsync(listingControlers.Index))
+  .post(
+    isLoggedIn,
+    upload.single("listing[image]"),
+    validateListing,
+    warpAsync(listingControlers.newCreateForm)
+  );
 
 // new route
-router.get("/new", isLoggedIn,listingControlers.newFormRender);
+router.get("/new", isLoggedIn, listingControlers.newFormRender);
 
-// show route
-router.get("/:id", warpAsync(listingControlers.showListing));
-
-// create route
-router.post("/", isLoggedIn,validateListing, warpAsync(listingControlers.newCreateForm));
+// Show Route , Delete Route And Update Route
+router
+  .route("/:id")
+  .get(warpAsync(listingControlers.showListing))
+  .put(
+    isLoggedIn,
+    isOwner,
+    upload.single("listing[image]"),
+    validateListing,
+    warpAsync(listingControlers.updateListing)
+  )
+  .delete(isLoggedIn, isOwner, warpAsync(listingControlers.deletedListing));
 
 // edit route
-router.get("/:id/edit",isLoggedIn, isOwner,warpAsync(listingControlers.editListing));
-
-// delete route
-router.delete("/:id",isLoggedIn, isOwner,warpAsync(listingControlers.deletedListing));
-
-// update route
-router.put("/:id",isLoggedIn, isOwner, validateListing, warpAsync(listingControlers.updateListing));
+router.get(
+  "/:id/edit",
+  isLoggedIn,
+  isOwner,
+  warpAsync(listingControlers.editListing)
+);
 
 module.exports = router;
